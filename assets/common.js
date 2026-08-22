@@ -43,16 +43,27 @@
   window.NR = { initAmbient, playSting, depth };
 
   // ---- URLゲート：正解語を入力すると次のページのパスを提示する ----
+  // 全角英数字→半角、前後・内部の余分な空白を除去してから比較する
+  function normalize(s) {
+    return (s || "")
+      .replace(/[\uFF01-\uFF5E]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)) // 全角→半角
+      .replace(/\u3000/g, " ") // 全角スペース→半角スペース
+      .trim()
+      .replace(/\s+/g, "")
+      .toLowerCase();
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-gate]").forEach((form) => {
-      const answer = (form.dataset.gate || "").trim().toLowerCase();
+      const answer = normalize(form.dataset.gate || "");
       const nextHref = form.dataset.next || "#";
       const input = form.querySelector("input");
-      const result = form.querySelector(".gate-result");
+      const container = form.closest(".gate") || form.parentElement;
+      const result = container.querySelector(".gate-result");
 
       form.addEventListener("submit", (e) => {
         e.preventDefault();
-        const val = (input.value || "").trim().toLowerCase();
+        const val = normalize(input.value || "");
         if (val === answer) {
           result.innerHTML =
             '次の座標を確認しました。アドレスバーに直接入力してください：<br><code>' +
