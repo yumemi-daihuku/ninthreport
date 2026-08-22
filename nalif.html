@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>――</title>
+<link rel="stylesheet" href="assets/style.css">
+<meta name="robots" content="noindex">
+<style>
+  body { background: var(--mirror-void); }
+  .mirrored {
+    transform: scaleX(-1);
+  }
+  .straight-line {
+    margin-top: 70px;
+    padding-top: 40px;
+    border-top: 1px solid var(--mirror-glow);
+    text-align: center;
+  }
+  .straight-line p {
+    color: var(--mirror-glow);
+    font-size: 17px;
+    letter-spacing: 0.12em;
+    line-height: 2.1;
+  }
+  .fin-mark {
+    text-align: center;
+    margin-top: 80px;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--mirror-cold);
+  }
+</style>
+</head>
+<body data-depth="7" class="mirror-tone" data-no-ambient="true">
+<div class="wrap">
+
+  <div class="mirrored fade-in">
+    <div class="doc-head" style="border-color: var(--mirror-glow);">
+      <div class="tag">RECORD TERMINATED — 以降の更新はありません</div>
+      <h1>第九報告書、ここまで</h1>
+    </div>
+
+    <p>ここでは、すべてが少しだけ逆になっている。</p>
+    <p>右手を挙げれば、左手が挙がる。名前を呼べば、違う名前が返ってくる。</p>
+    <p>
+      あなたがここに至るまでに読んだ報告書——第七も、第八も、第九も——
+      すべては同じことを、別の言い方で書いていただけだった。
+      「見せることで、招く」。それだけだ。
+    </p>
+    <p>
+      調査官も、被害者も、読者も、区別する意味はもうない。
+      鏡のこちら側に立った者は、いずれ気づく。
+      自分が最初から、あちら側の住人だったかもしれないということに。
+    </p>
+    <p>第十報告書は、存在しない。それを書く者が、もうこちら側にいないからだ。</p>
+  </div>
+
+  <div class="straight-line">
+    <p id="typedLine"></p>
+  </div>
+
+  <div class="fin-mark">IX — ∎</div>
+
+</div>
+<script src="assets/common.js"></script>
+<script>
+  // このページは一方通行の終着点。誘導・リンクを一切設置しない。
+  const line = "あなたは、この世界の住人ではない。……もう、そうかもしれない。";
+  const el = document.getElementById("typedLine");
+  let i = 0;
+  function type() {
+    if (i <= line.length) {
+      el.textContent = line.slice(0, i);
+      i++;
+      setTimeout(type, 90);
+    }
+  }
+  setTimeout(type, 1600);
+
+  setTimeout(() => { NR.playSting(0.4); }, 900);
+
+  setTimeout(() => {
+    const amb = new Audio("assets/audio/white_noise1.mp3");
+    amb.loop = true;
+    amb.volume = 0;
+    amb.play().catch(() => {});
+    let v = 0;
+    const fade = setInterval(() => {
+      v += 0.005;
+      amb.volume = Math.min(v, 0.3);
+      if (v >= 0.3) clearInterval(fade);
+    }, 100);
+  }, 2600);
+
+  document.title = "――";
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>reflection ｜ 第九報告書 補助資料</title>
+<link rel="stylesheet" href="assets/style.css">
+<meta name="robots" content="noindex">
+</head>
+<body data-depth="3">
+<div class="wrap">
+
+  <div class="doc-head fade-in">
+    <div class="tag">ACCESS VIA DIRECT ENTRY ONLY</div>
+    <h1>補助資料：観測記録</h1>
+    <div class="meta">
+      <span class="stamp">対象領域：あなた自身</span>
+    </div>
+  </div>
+
+  <p>
+    ここまで来たなら、もう分かっているはずだ。このページはあなたを観測している。
+    大したことはしていない——ブラウザが最初から渡してくれる情報を、並べているだけだ。
+    それでも、これを見て何も感じないという人は少ない。
+  </p>
+
+  <div class="section-label">現在観測中の情報</div>
+  <table class="report-table" id="infoTable">
+    <tbody>
+      <tr><td>言語設定</td><td id="v-lang">-</td></tr>
+      <tr><td>タイムゾーン</td><td id="v-tz">-</td></tr>
+      <tr><td>画面解像度</td><td id="v-res">-</td></tr>
+      <tr><td>ウィンドウサイズ</td><td id="v-win">-</td></tr>
+      <tr><td>現在時刻（端末基準）</td><td id="v-time">-</td></tr>
+      <tr><td>この記録を見ている時間</td><td id="v-elapsed">00:00</td></tr>
+    </tbody>
+  </table>
+  <p class="small-note">
+    これらは対象の能力ではない。ただのウェブ標準機能である。恐ろしいのはむしろ、
+    こんな当たり前の情報だけで、人は「見られている」と確信してしまうという事実の方だ。
+  </p>
+
+  <hr class="div">
+
+  <div class="section-label">01 ／ 押収資料：座標ログの断片</div>
+  <p>
+    第九被害者・IX-06の自室から回収された紙片。数字の羅列としか見えなかったが、
+    解析班の一人が「昔、暗記表で習った並びに似ている」と指摘した。
+  </p>
+
+  <blockquote>
+    15 - 20 - 8 - 5 - 18 - 19 - 9 - 4 - 5
+  </blockquote>
+  <p class="small-note">
+    A=1, B=2, C=3 ...という、あの単純な表に当てはめてみること。
+  </p>
+
+  <hr class="div">
+
+  <div class="gate">
+    <div class="gate-label">▸ 続きを読むには</div>
+    <div class="gate-body">
+      座標ログを変換して得られる語（半角英字・小文字）を入力してください。
+    </div>
+    <form data-gate="otherside" data-next="other-side.html" style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <input type="text" placeholder="半角英字で入力" autocomplete="off" style="flex:1; min-width:200px;">
+      <button type="submit">照合する</button>
+    </form>
+    <div class="gate-result"></div>
+  </div>
+
+</div>
+<script src="assets/common.js"></script>
+<script>
+  NR.initAmbient(0.10);
+
+  try {
+    document.getElementById("v-lang").textContent = navigator.language || "不明";
+    document.getElementById("v-tz").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "不明";
+    document.getElementById("v-res").textContent = screen.width + " × " + screen.height + " px";
+    document.getElementById("v-win").textContent = window.innerWidth + " × " + window.innerHeight + " px";
+  } catch (e) {}
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function updateClock() {
+    const d = new Date();
+    document.getElementById("v-time").textContent =
+      d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()) + " " +
+      pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  const start = Date.now();
+  setInterval(() => {
+    const sec = Math.floor((Date.now() - start) / 1000);
+    document.getElementById("v-elapsed").textContent = pad(Math.floor(sec/60)) + ":" + pad(sec%60);
+  }, 1000);
+
+  // 一定時間見続けると、行の一つがふっと明滅する（軽い違和感の演出）
+  setTimeout(() => {
+    const rows = document.querySelectorAll("#infoTable tr");
+    const target = rows[Math.floor(Math.random() * rows.length)];
+    target.style.transition = "opacity 0.15s";
+    let n = 0;
+    const flicker = setInterval(() => {
+      target.style.opacity = target.style.opacity === "0.2" ? "1" : "0.2";
+      n++;
+      if (n > 5) { clearInterval(flicker); target.style.opacity = "1"; }
+    }, 120);
+  }, 9000);
+</script>
+</body>
+</html>

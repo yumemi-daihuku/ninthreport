@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mirror ｜ 第九報告書 補助資料</title>
+<link rel="stylesheet" href="assets/style.css">
+<meta name="robots" content="noindex">
+</head>
+<body data-depth="2">
+<div class="wrap">
+
+  <div class="doc-head fade-in">
+    <div class="tag">ACCESS VIA DIRECT ENTRY ONLY — このページはリンクを辿って来られません</div>
+    <h1>補助資料：反射観測ツール</h1>
+    <div class="meta">
+      <span>直リンク不可・URL直接入力による到達のみ許可</span>
+      <span class="stamp">実験的</span>
+    </div>
+  </div>
+
+  <p>
+    対象は「見せる」ことで人を招く。もっとも単純な例が、これだ。
+    下の欄に、任意のURL——なんでもいい、あなた自身のサイトでも、いま見ているこのページの
+    アドレスでもいい——を入力してみてほしい。それを、そのまま裏返して返す。
+  </p>
+
+  <div class="section-label">反射観測ツール</div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <input type="text" id="mirrorInput" placeholder="https://... を入力してEnter" autocomplete="off" style="flex:1; min-width:220px;">
+    <button id="mirrorBtn">映す</button>
+  </div>
+  <div id="mirrorOut" style="margin-top:18px; min-height: 60px;"></div>
+
+  <p class="small-note" id="hintNote" style="display:none;">
+    何度か違うURLを試してみてほしい。裏返した文字列の「末尾」に、注目すること。
+  </p>
+
+  <div id="revealBlock" style="display:none; margin-top:40px;">
+    <hr class="div">
+    <div class="section-label">記録：ガラスの内側に焼き付いた痕跡</div>
+    <p>
+      何を映しても、最後には同じ言葉が浮かぶ。まるでツール自体が、
+      あなたに何かを伝えたがっているかのように。
+    </p>
+    <p style="font-size:20px; letter-spacing:0.1em; text-align:center; margin:30px 0;">
+      <span class="flip" id="mirrorWord">lmth.noitcelfer:txeN</span>
+    </p>
+    <p class="small-note">※ このページのソースコードでは、上の一文は正しく読めません。画面上でのみ、正しい形になります。</p>
+  </div>
+
+  <hr class="div">
+
+  <div class="gate">
+    <div class="gate-label">▸ 続きを読むには</div>
+    <div class="gate-body">
+      鏡に焼き付いていた語（半角英字・小文字）を入力してください。
+    </div>
+    <form data-gate="reflection" data-next="reflection.html" style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <input type="text" placeholder="半角英字で入力" autocomplete="off" style="flex:1; min-width:200px;">
+      <button type="submit">照合する</button>
+    </form>
+    <div class="gate-result"></div>
+  </div>
+
+</div>
+<script src="assets/common.js"></script>
+<script>
+  NR.initAmbient(0.08);
+
+  function reverseStr(s) { return s.split("").reverse().join(""); }
+
+  const input = document.getElementById("mirrorInput");
+  const out = document.getElementById("mirrorOut");
+  const hintNote = document.getElementById("hintNote");
+  const revealBlock = document.getElementById("revealBlock");
+  let submitCount = 0;
+
+  function doMirror() {
+    const val = input.value.trim();
+    if (!val) return;
+    submitCount++;
+    // 入力を反転し、固定の隠しメッセージを裏返して連結する。
+    // 何を入力しても末尾の部分だけは常に同じ反転文字列になる。
+    const hiddenTail = "Next:reflection.html";
+    const combined = val + "  " + hiddenTail;
+    const mirrored = reverseStr(combined);
+    const p = document.createElement("p");
+    p.style.wordBreak = "break-all";
+    p.style.fontFamily = "var(--font-doc)";
+    p.textContent = "» " + mirrored;
+    p.className = "fade-in";
+    out.prepend(p);
+
+    if (submitCount === 1) {
+      hintNote.style.display = "block";
+    }
+    if (submitCount >= 3 && revealBlock.style.display === "none") {
+      revealBlock.style.display = "block";
+      NR.playSting(0.25);
+      revealBlock.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  document.getElementById("mirrorBtn").addEventListener("click", doMirror);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") doMirror(); });
+</script>
+</body>
+</html>

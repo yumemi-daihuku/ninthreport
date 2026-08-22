@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>final ｜ 第九報告書</title>
+<link rel="stylesheet" href="assets/style.css">
+<meta name="robots" content="noindex">
+<style>
+  #pressArea {
+    margin-top: 40px;
+    height: 220px;
+    border: 1px solid var(--mirror-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+  #pressFill {
+    position: absolute;
+    left: 0; bottom: 0; width: 100%;
+    height: 0%;
+    background: linear-gradient(180deg, transparent, rgba(217,219,228,0.35));
+    transition: height 0.05s linear;
+  }
+  #pressLabel {
+    position: relative;
+    z-index: 1;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: var(--mirror-glow);
+    text-align: center;
+    padding: 0 20px;
+  }
+  #blackout {
+    position: fixed; inset: 0; background: #000; opacity: 0;
+    pointer-events: none; z-index: 50; transition: opacity 2.4s ease;
+  }
+  #revealText {
+    display: none;
+    margin-top: 30px;
+    text-align: center;
+  }
+</style>
+</head>
+<body data-depth="6" class="mirror-tone">
+<div class="wrap">
+
+  <div class="doc-head fade-in">
+    <div class="tag">ACCESS VIA DIRECT ENTRY ONLY</div>
+    <h1>最後の記録</h1>
+    <div class="meta">
+      <span class="stamp">これより先、記録の体裁を保証しません</span>
+    </div>
+  </div>
+
+  <p>
+    書けることは、もう多くない。第七から数えて、これが最後の報告になる。
+    調査は失敗した。対象を封じることも、正体を特定することもできなかった。
+  </p>
+  <p>
+    分かったのは一つだけ。対象は、何かを見せることで人を招く。
+    そして今、あなたはこの画面の前に、随分長くいる。
+  </p>
+  <p style="text-align:center; margin-top:36px; color: var(--mirror-cold); font-size:13px; letter-spacing:0.2em;">
+    何も書かれていない場所に、指を、あるいはカーソルを、置いたままにしてほしい。
+  </p>
+
+  <div id="pressArea">
+    <div id="pressFill"></div>
+    <div id="pressLabel">ここに触れたまま、離さないでください</div>
+  </div>
+
+  <div id="revealText">
+    <p style="font-size:15px; color: var(--mirror-glow);">
+      ようやく、見えた。
+    </p>
+    <p style="font-size:22px; letter-spacing:0.3em; margin:22px 0;">
+      <span class="flip">nalif</span>
+    </p>
+    <p class="small-note" style="color: var(--mirror-cold);">
+      アドレスバーに、直接入力してください。<br>
+      <code style="background:rgba(255,255,255,0.06); color:var(--mirror-glow); padding:2px 8px;">nalif.html</code>
+    </p>
+  </div>
+
+</div>
+<div id="blackout"></div>
+<script src="assets/common.js"></script>
+<script>
+  NR.initAmbient(0.22);
+
+  const area = document.getElementById("pressArea");
+  const fill = document.getElementById("pressFill");
+  const label = document.getElementById("pressLabel");
+  const reveal = document.getElementById("revealText");
+  const blackout = document.getElementById("blackout");
+
+  const HOLD_MS = 4200;
+  let holding = false;
+  let startedAt = 0;
+  let rafId = null;
+  let done = false;
+
+  function tick() {
+    if (!holding || done) return;
+    const elapsed = Date.now() - startedAt;
+    const pct = Math.min(100, (elapsed / HOLD_MS) * 100);
+    fill.style.height = pct + "%";
+    if (pct > 40 && pct < 100) {
+      label.style.opacity = 0.4 + Math.random() * 0.6;
+    }
+    if (pct >= 100) {
+      done = true;
+      completeHold();
+      return;
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startHold() {
+    if (done) return;
+    holding = true;
+    startedAt = Date.now();
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function cancelHold() {
+    if (done) return;
+    holding = false;
+    cancelAnimationFrame(rafId);
+    fill.style.height = "0%";
+    label.style.opacity = 1;
+  }
+
+  function completeHold() {
+    label.textContent = "……";
+    NR.playSting(0.55);
+    blackout.style.opacity = "1";
+    setTimeout(() => {
+      area.style.display = "none";
+      reveal.style.display = "block";
+      blackout.style.opacity = "0";
+    }, 1400);
+  }
+
+  area.addEventListener("mousedown", startHold);
+  area.addEventListener("touchstart", (e) => { e.preventDefault(); startHold(); }, { passive: false });
+  ["mouseup", "mouseleave"].forEach(ev => area.addEventListener(ev, cancelHold));
+  area.addEventListener("touchend", cancelHold);
+  area.addEventListener("touchcancel", cancelHold);
+</script>
+</body>
+</html>

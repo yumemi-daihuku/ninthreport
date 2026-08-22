@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>other-side ｜ 第九報告書 補助資料</title>
+<link rel="stylesheet" href="assets/style.css">
+<meta name="robots" content="noindex">
+</head>
+<body data-depth="4" class="mirror-tone">
+<div class="wrap">
+
+  <div class="doc-head fade-in">
+    <div class="tag">ACCESS VIA DIRECT ENTRY ONLY</div>
+    <h1>補助資料：向こう側の確認</h1>
+    <div class="meta">
+      <span class="stamp">対象領域：あなたの姿</span>
+    </div>
+  </div>
+
+  <p>
+    第七報告書にあった被害者の共通証言を覚えているだろうか。
+    「鏡や水面が、自分を映さなくなった」。それを、こちらから確かめる方法がある。
+    カメラを使って、いま、自分がまだこちら側にいるかどうかを見てみるといい。
+  </p>
+
+  <div class="section-label">確認装置を起動する</div>
+  <div id="camArea">
+    <button id="camBtn">カメラへのアクセスを許可する</button>
+    <p class="small-note">この操作は任意です。拒否しても、この先の記録は問題なく読み進められます。</p>
+  </div>
+
+  <div id="videoWrap" style="display:none; margin-top:18px;">
+    <video id="cam" autoplay playsinline muted style="width:100%; max-width:420px; border:1px solid var(--mirror-glow); filter: grayscale(0.3) contrast(1.1);"></video>
+    <p class="small-note" id="camMsg">映っている。……いまのところは。</p>
+  </div>
+
+  <div id="fallbackMsg" style="display:none; margin-top:18px;">
+    <blockquote>何も見えません。それでいい。むしろ、それでいい方です。</blockquote>
+  </div>
+
+  <hr class="div">
+
+  <div class="section-label">01 ／ 押収資料：走査記録の断片</div>
+  <p>
+    向こう側で採取された文字列。第九捜査班の一人は「境界の向こうでは、
+    文字が少しだけ、ずれて見える」と書き残している。
+  </p>
+  <blockquote style="font-size:16px; letter-spacing:0.15em;">erxqgdub</blockquote>
+  <p class="small-note">ずれの幅は、3。戻す方向に、3つ。</p>
+
+  <hr class="div">
+
+  <div class="gate">
+    <div class="gate-label">▸ 続きを読むには</div>
+    <div class="gate-body">
+      走査記録を正しい向きに戻して得られる語（半角英字・小文字）を入力してください。
+    </div>
+    <form data-gate="boundary" data-next="boundary.html" style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <input type="text" placeholder="半角英字で入力" autocomplete="off" style="flex:1; min-width:200px;">
+      <button type="submit">照合する</button>
+    </form>
+    <div class="gate-result"></div>
+  </div>
+
+</div>
+<script src="assets/common.js"></script>
+<script>
+  NR.initAmbient(0.13);
+
+  const camBtn = document.getElementById("camBtn");
+  const camArea = document.getElementById("camArea");
+  const videoWrap = document.getElementById("videoWrap");
+  const fallbackMsg = document.getElementById("fallbackMsg");
+  const video = document.getElementById("cam");
+
+  camBtn.addEventListener("click", async () => {
+    camBtn.disabled = true;
+    camBtn.textContent = "接続しています…";
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      video.srcObject = stream;
+      videoWrap.style.display = "block";
+      camArea.style.display = "none";
+      NR.playSting(0.3);
+
+      // 時間経過とともに、映像に僅かな遅延・粒子ノイズを重ねていく（簡易演出）
+      let t = 0;
+      const msg = document.getElementById("camMsg");
+      const lines = [
+        "映っている。……いまのところは。",
+        "少し、遅れていないだろうか。",
+        "瞬きの数が、合っていない気がする。",
+        "——大丈夫。これはただのカメラだ。"
+      ];
+      const interval = setInterval(() => {
+        t++;
+        if (t < lines.length) msg.textContent = lines[t];
+        video.style.filter = `grayscale(${0.3 + t*0.1}) contrast(${1.1 + t*0.05}) blur(${t*0.3}px)`;
+        if (t >= lines.length) clearInterval(interval);
+      }, 3500);
+    } catch (err) {
+      camArea.style.display = "none";
+      fallbackMsg.style.display = "block";
+    }
+  });
+</script>
+</body>
+</html>
